@@ -9,7 +9,7 @@
   </classpathentry>
   <classpathentry kind="src" path="/is.idega.idegaweb.egov.cases">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/is.idega.idegaweb.egov.application-1.0.14.jar">
+  <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/is.idega.idegaweb.egov.application-1.0.16.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/is.idega.idegaweb.egov.message-1.0.3.jar">
   </classpathentry>
