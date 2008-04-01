@@ -1,0 +1,14 @@
+<document>
+	<properties>
+		<title>Cases RVK changes</title>
+		<author email="palli@idega.com">Pall Helgason</author>
+	</properties>
+	
+	<body>
+		<release version="1.0.1" date="2008-03-01">
+			<action dev="palli" type="update">
+				Declaring new version of block.
+			</action>
+		</release>
+	</body>
+</document>
