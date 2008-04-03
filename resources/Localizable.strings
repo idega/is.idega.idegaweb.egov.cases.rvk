@@ -9,6 +9,7 @@ application_errors_occured=There was a problem with the following items
 attachment=Attachment
 case_category=Case category
 case_creator.Terms=Terms
+case_creator.accepts_terms=accepts_terms
 case_creator.answer_type_text=If you wanted an answer to your case please select the answer type here below.
 case_creator.category_empty=You must select a category
 case_creator.email_anwer_admin_info=If you would like an answer to your case please check the checkbox here below.

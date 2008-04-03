@@ -5,7 +5,7 @@
   <pomVersion>3</pomVersion>
   <name>eGov General Cases Reykjavik</name>
   <artifactId>is.idega.idegaweb.egov.cases.rvk</artifactId>
-  <currentVersion>1.0.1</currentVersion>
+  <currentVersion>1.0.2</currentVersion>
   <inceptionYear>2008</inceptionYear>
   <shortDescription>eGov General Cases Reykjavik</shortDescription>
   <versions>

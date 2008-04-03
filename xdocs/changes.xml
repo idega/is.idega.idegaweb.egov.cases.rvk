@@ -5,6 +5,12 @@
 	</properties>
 	
 	<body>
+		<release version="1.0.2" date="2008-04-03">
+			<action dev="palli" type="update">
+				Added terms pdf file to anonymous case.
+			</action>
+		</release>
+
 		<release version="1.0.1" date="2008-03-01">
 			<action dev="palli" type="update">
 				Declaring new version of block.

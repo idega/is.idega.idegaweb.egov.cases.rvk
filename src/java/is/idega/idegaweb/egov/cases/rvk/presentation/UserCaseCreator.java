@@ -687,22 +687,41 @@ public class UserCaseCreator extends CaseCreator {
 			section.add(clear);
 		}
 
-		heading = new Heading1(this.iwrb.getLocalizedString(getPrefix()
-				+ "case_creator.Terms", "Terms"));
-		heading.setStyleClass("subHeader");
-		form.add(heading);
-		Layer terms = new Layer(Layer.DIV);
-		section = new Layer(Layer.DIV);
-		section.setStyleClass("formSection");
-		form.add(section);
-		Paragraph paragraph = new Paragraph();
-		paragraph.setStyleClass("termText");
-		paragraph
-				.add(new Text(this.iwrb.getLocalizedString(getPrefix()
-						+ "case_creator.term_text",
-						"Legal terms... bla bla bla bla.")));
-		section.add(paragraph);
+		if (iUseAnonymous) {
+			heading = new Heading1(this.iwrb.getLocalizedString(getPrefix()
+					+ "case_creator.Terms", "Terms"));
+			heading.setStyleClass("subHeader");
+			form.add(heading);
+			
+			section = new Layer(Layer.DIV);
+			section.setStyleClass("formSection");
+			form.add(section);
+			Paragraph paragraph = new Paragraph();
+			paragraph.setStyleClass("termText");
+			paragraph
+					.add(new Text(this.iwrb.getLocalizedString(getPrefix()
+							+ "case_creator.term_text",
+							"Legal terms... bla bla bla bla.")));
+			section.add(paragraph);
 
+			CheckBox acceptsTerms = new CheckBox(
+					PARAMETER_ANSWER_TYPE_PHONE, Boolean.FALSE.toString());
+			acceptsTerms.setStyleClass("checkbox");
+			acceptsTerms.keepStatusOnAction(true);
+
+
+			formItem = new Layer(Layer.DIV);
+			formItem.setStyleClass("formItem");
+			formItem.setStyleClass("radioButtonItem");
+			formItem.setStyleClass("required");
+			label = new Label(new Span(new Text(this.iwrb.getLocalizedString(
+					getPrefix() + "case_creator.accepts_terms",
+					"accepts_terms"))), acceptsTerms);
+			formItem.add(acceptsTerms);
+			formItem.add(label);
+			section.add(formItem);
+		}
+		
 		Layer bottom = new Layer(Layer.DIV);
 		bottom.setStyleClass("bottom");
 		form.add(bottom);
