@@ -1110,7 +1110,7 @@ public class UserCaseCreator extends CaseCreator {
 							getCasesBusiness(iwc).useSubCategories() ? subCaseCategoryPK
 									: caseCategoryPK,
 							caseTypePK,
-							attachment.getPrimaryKey(),
+							attachment!=null?attachment.getPrimaryKey():null,
 							regarding,
 							message,
 							getType(),
