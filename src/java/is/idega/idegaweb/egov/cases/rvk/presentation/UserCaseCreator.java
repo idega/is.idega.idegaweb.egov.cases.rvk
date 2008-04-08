@@ -485,7 +485,7 @@ public class UserCaseCreator extends CaseCreator {
 
 		if (this.iUseAnonymous) {
 			CheckBox wantAnswer = new CheckBox(PARAMETER_WANT_ANSWER,
-					Boolean.FALSE.toString());
+					Boolean.TRUE.toString());
 			wantAnswer.setStyleClass("checkbox");
 			wantAnswer.keepStatusOnAction(true);
 
@@ -522,12 +522,12 @@ public class UserCaseCreator extends CaseCreator {
 			section.add(paragraph);
 
 			CheckBox wantAnswerEmail = new CheckBox(
-					PARAMETER_ANSWER_TYPE_EMAIL, Boolean.FALSE.toString());
+					PARAMETER_ANSWER_TYPE_EMAIL, Boolean.TRUE.toString());
 			wantAnswerEmail.setStyleClass("checkbox");
 			wantAnswerEmail.keepStatusOnAction(true);
 
 			CheckBox wantAnswerPhone = new CheckBox(
-					PARAMETER_ANSWER_TYPE_PHONE, Boolean.FALSE.toString());
+					PARAMETER_ANSWER_TYPE_PHONE, Boolean.TRUE.toString());
 			wantAnswerPhone.setStyleClass("checkbox");
 			wantAnswerPhone.keepStatusOnAction(true);
 
@@ -1123,6 +1123,11 @@ public class UserCaseCreator extends CaseCreator {
 			theCase.setWantReply(want_answer);
 			theCase.setWantReplyEmail(email_answer);
 			theCase.setWantReplyPhone(phone_answer);
+			if (iUseAnonymous) {
+				theCase.setAsAnonymous(true);
+			} else {
+				theCase.setAsAnonymous(false);				
+			}
 			if (iUseSessionUser) {
 				theCase.setCreator(iwc.getCurrentUser());
 			}
@@ -1133,6 +1138,7 @@ public class UserCaseCreator extends CaseCreator {
 			info.setGeneralCase(theCase);
 			info.setIPAddress(iwc.getRemoteIpAddress());
 			info.setPersonalID(ssn);
+			info.setName(name);
 			info.setPhone(phone);
 			info.setEmail(email);
 			info.setUser(user);

@@ -18,6 +18,7 @@ public class AnonymousInfoBMPBean extends GenericEntity implements
 	protected static String COLUMN_CASE = "comm_case_id";
 	protected static String COLUMN_USER = "ic_user_id";
 	protected static String COLUMN_PERSONAL_ID = "personal_id";
+	protected static String COLUMN_NAME = "name";
 	protected static String COLUMN_EMAIL = "email";
 	protected static String COLUMN_PHONE = "phone";
 	protected static String COLUMN_IP_ADDRESS = "ip_address";
@@ -31,6 +32,7 @@ public class AnonymousInfoBMPBean extends GenericEntity implements
 		addOneToOneRelationship(COLUMN_CASE, GeneralCase.class);
 		addManyToOneRelationship(COLUMN_USER, User.class);
 		addAttribute(COLUMN_PERSONAL_ID, "Personal id", String.class);
+		addAttribute(COLUMN_NAME, "Name", String.class);
 		addAttribute(COLUMN_EMAIL, "Email", String.class);
 		addAttribute(COLUMN_PHONE, "Phone", String.class);
 		addAttribute(COLUMN_IP_ADDRESS, "IP address", String.class);
@@ -48,7 +50,11 @@ public class AnonymousInfoBMPBean extends GenericEntity implements
 	public String getPersonalID() {
 		return getStringColumnValue(COLUMN_PERSONAL_ID);
 	}
-	
+
+	public String getName() {
+		return getStringColumnValue(COLUMN_NAME);
+	}
+
 	public String getEmail() {
 		return getStringColumnValue(COLUMN_EMAIL);
 	}
@@ -73,7 +79,11 @@ public class AnonymousInfoBMPBean extends GenericEntity implements
 	public void setPersonalID(String personalID) {
 		setColumn(COLUMN_PERSONAL_ID, personalID);
 	}
-	
+
+	public void setName(String name) {
+		setColumn(COLUMN_NAME, name);
+	}
+
 	public void setEmail(String email) {
 		setColumn(COLUMN_EMAIL, email);		
 	}
