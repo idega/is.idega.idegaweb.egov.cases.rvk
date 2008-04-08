@@ -72,6 +72,8 @@ public class UserCaseCreator extends CaseCreator {
 
 	protected static final String PARAMETER_PRIORITY = "prm_priority";
 
+	protected static final String PARAMETER_ACCEPT_TERMS = "prm_accept_terms";
+	
 	protected String defaultType = null;
 
 	public String getBundleIdentifier() {
@@ -553,7 +555,7 @@ public class UserCaseCreator extends CaseCreator {
 		} else if (!iUseSessionUser) {
 			MessageSession messageSession = getMessageSession(iwc);
 
-			CheckBox wantAnswer = new CheckBox(PARAMETER_WANT_ANSWER);
+			CheckBox wantAnswer = new CheckBox(PARAMETER_WANT_ANSWER, Boolean.TRUE.toString());
 			wantAnswer.setChecked(!messageSession.getIfUserPreferesMessageByEmail());
 			
 			wantAnswer.setStyleClass("checkbox");
@@ -582,7 +584,7 @@ public class UserCaseCreator extends CaseCreator {
 		} else {
 			MessageSession messageSession = getMessageSession(iwc);
 
-			CheckBox wantAnswer = new CheckBox(PARAMETER_WANT_ANSWER);
+			CheckBox wantAnswer = new CheckBox(PARAMETER_WANT_ANSWER, Boolean.TRUE.toString());
 			wantAnswer.setChecked(messageSession.getIfUserPreferesMessageByEmail());
 
 			wantAnswer.setStyleClass("checkbox");
@@ -617,12 +619,12 @@ public class UserCaseCreator extends CaseCreator {
 			section.add(paragraph);
 
 			CheckBox wantAnswerEmail = new CheckBox(
-					PARAMETER_ANSWER_TYPE_EMAIL, Boolean.FALSE.toString());
+					PARAMETER_ANSWER_TYPE_EMAIL, Boolean.TRUE.toString());
 			wantAnswerEmail.setStyleClass("checkbox");
 			wantAnswerEmail.keepStatusOnAction(true);
 
 			CheckBox wantAnswerPhone = new CheckBox(
-					PARAMETER_ANSWER_TYPE_PHONE, Boolean.FALSE.toString());
+					PARAMETER_ANSWER_TYPE_PHONE, Boolean.TRUE.toString());
 			wantAnswerPhone.setStyleClass("checkbox");
 			wantAnswerPhone.keepStatusOnAction(true);
 
@@ -708,7 +710,7 @@ public class UserCaseCreator extends CaseCreator {
 			section.add(paragraph);
 
 			CheckBox acceptsTerms = new CheckBox(
-					PARAMETER_ANSWER_TYPE_PHONE, Boolean.FALSE.toString());
+					PARAMETER_ACCEPT_TERMS, Boolean.TRUE.toString());
 			acceptsTerms.setStyleClass("checkbox");
 			acceptsTerms.keepStatusOnAction(true);
 
@@ -728,267 +730,6 @@ public class UserCaseCreator extends CaseCreator {
 		Layer bottom = new Layer(Layer.DIV);
 		bottom.setStyleClass("bottom");
 		form.add(bottom);
-
-		Link next = getButtonLink(this.iwrb.getLocalizedString("send", "Send"));
-		next.setValueOnClick(PARAMETER_ACTION, String.valueOf(ACTION_SAVE));
-		next.setToFormSubmit(form);
-		bottom.add(next);
-
-		add(form);
-	}
-
-	protected void showOverview(IWContext iwc) throws RemoteException {
-		Locale locale = iwc.getCurrentLocale();
-
-		Object caseTypePK = iwc.getParameter(PARAMETER_CASE_TYPE_PK);
-		Object caseCategoryPK = iwc.getParameter(PARAMETER_CASE_CATEGORY_PK);
-		Object subCaseCategoryPK = iwc
-				.getParameter(PARAMETER_SUB_CASE_CATEGORY_PK);
-		// String regarding = iwc.getParameter(PARAMETER_REGARDING);
-		String title = iwc.getParameter(PARAMETER_TITLE);
-		String message = getMessageParameterValue(iwc);
-
-		String name = iwc.getParameter(PARAMETER_NAME);
-		String personalID = iwc.getParameter(PARAMETER_PERSONAL_ID);
-		String email = iwc.getParameter(PARAMETER_EMAIL);
-		String emailConf = iwc.getParameter(PARAMETER_EMAIL_CONF);
-		String phone = iwc.getParameter(PARAMETER_PHONE);
-
-		String wantAnswer = iwc.getParameter(PARAMETER_WANT_ANSWER);
-		// String answerType = iwc.getParameter(PARAMETER_ANSWER_TYPE);
-
-		ICFile attachment = null;
-		UploadFile uploadFile = iwc.getUploadedFile();
-		if (uploadFile != null && uploadFile.getName() != null
-				&& uploadFile.getName().length() > 0) {
-			try {
-				FileInputStream input = new FileInputStream(uploadFile
-						.getRealPath());
-
-				attachment = ((ICFileHome) IDOLookup.getHome(ICFile.class))
-						.create();
-				attachment.setName(uploadFile.getName());
-				attachment.setMimeType(uploadFile.getMimeType());
-				attachment.setFileValue(input);
-				attachment.setFileSize((int) uploadFile.getSize());
-				attachment.store();
-
-				uploadFile.setId(((Integer) attachment.getPrimaryKey())
-						.intValue());
-				try {
-					FileUtil.delete(uploadFile);
-				} catch (Exception ex) {
-					System.err
-							.println("MediaBusiness: deleting the temporary file at "
-									+ uploadFile.getRealPath() + " failed.");
-				}
-			} catch (RemoteException e) {
-				e.printStackTrace(System.err);
-				uploadFile.setId(-1);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (CreateException ce) {
-				ce.printStackTrace();
-			}
-		}
-
-		CaseCategory category = null;
-		if (caseCategoryPK != null && !"".equals(caseCategoryPK)) {
-			try {
-				category = getCasesBusiness(iwc)
-						.getCaseCategory(caseCategoryPK);
-			} catch (FinderException fe) {
-				throw new IBORuntimeException(fe);
-			}
-		}
-
-		CaseCategory subCategory = null;
-		if (getCasesBusiness(iwc).useSubCategories()
-				&& subCaseCategoryPK != null && !"".equals(subCaseCategoryPK)) {
-			try {
-				subCategory = getCasesBusiness(iwc).getCaseCategory(
-						subCaseCategoryPK);
-			} catch (FinderException fe) {
-				throw new IBORuntimeException(fe);
-			}
-		}
-
-		CaseType type = null;
-		if (caseTypePK != null && !"".equals(caseTypePK)) {
-			try {
-				type = getCasesBusiness(iwc).getCaseType(caseTypePK);
-			} catch (FinderException fe) {
-				throw new IBORuntimeException(fe);
-			}
-		}
-
-		if (this.getCasesBusiness(iwc).useSubCategories()) {
-			if (!iwc.isParameterSet(PARAMETER_SUB_CASE_CATEGORY_PK)) {
-				setError(PARAMETER_CASE_CATEGORY_PK, this.iwrb
-						.getLocalizedString("case_creator.sub_category_empty",
-								"You must select a category"));
-			}
-		}
-		if (!iwc.isParameterSet(PARAMETER_CASE_CATEGORY_PK)) {
-			setError(PARAMETER_CASE_CATEGORY_PK, this.iwrb
-					.getLocalizedString("case_creator.category_empty",
-							"You must select a category"));
-		}
-		if (!iwc.isParameterSet(PARAMETER_CASE_TYPE_PK)) {
-			setError(PARAMETER_CASE_TYPE_PK, this.iwrb.getLocalizedString(
-					"case_creator.type_empty", "You must select a type"));
-		}
-		if (!iwc.isParameterSet(PARAMETER_TITLE)) {
-			setError(PARAMETER_TITLE, this.iwrb.getLocalizedString(getPrefix()
-					+ "case_creator.title_empty",
-					"You must enter a title for the case"));
-		}
-		if (!iwc.isParameterSet(PARAMETER_MESSAGE)) {
-			setError(PARAMETER_MESSAGE, this.iwrb.getLocalizedString(
-					getPrefix() + "case_creator.message_empty",
-					"You must enter a message"));
-		}
-
-		if (hasErrors()) {
-			showPhaseOne(iwc);
-			return;
-		}
-
-		User user = getUser(iwc);
-
-		Form form = new Form();
-		form.setStyleClass("casesForm");
-		form.setStyleClass("overview");
-		form.addParameter(PARAMETER_ACTION, String.valueOf(ACTION_OVERVIEW));
-
-		form.maintainParameter(PARAMETER_CASE_TYPE_PK);
-		form.maintainParameter(PARAMETER_CASE_CATEGORY_PK);
-		form.maintainParameter(PARAMETER_SUB_CASE_CATEGORY_PK);
-		form.maintainParameter(PARAMETER_PRIVATE);
-		form.maintainParameter(PARAMETER_REGARDING);
-		if (attachment != null) {
-			form.add(new HiddenInput(PARAMETER_ATTACHMENT_PK, attachment
-					.getPrimaryKey().toString()));
-		}
-
-		String headingText = this.iwrb.getLocalizedString(getPrefix()
-				+ (this.iUseAnonymous ? "anonymous_application.case_creator"
-						: "application.case_creator"), "Case creator");
-		if (category != null) {
-			headingText += " - " + category.getLocalizedCategoryName(locale);
-		}
-		Heading1 heading = new Heading1(this.iwrb.getLocalizedString(
-				getPrefix() + "application.case_creator", "Case creator"));
-		heading.setStyleClass("applicationHeading");
-		form.add(heading);
-
-		form.add(getPhasesHeader(this.iwrb.getLocalizedString(getPrefix()
-				+ "application.overview", "Overview"), 2, 3));
-
-		form.add(getPersonInfo(iwc, user));
-
-		heading = new Heading1(this.iwrb.getLocalizedString(getPrefix()
-				+ "case_creator.enter_case_overview", "New case overview"));
-		heading.setStyleClass("subHeader");
-		heading.setStyleClass("topSubHeader");
-		form.add(heading);
-
-		Layer section = new Layer(Layer.DIV);
-		section.setStyleClass("formSection");
-		form.add(section);
-
-		Span typeSpan = new Span(new Text(type.getName()));
-		Span categorySpan = new Span(new Text(category
-				.getLocalizedCategoryName(locale)));
-		// Span regardingSpan = new Span(new Text(regarding));
-		Span messageSpan = new Span(new Text(message));
-
-		if (getCasesBusiness(iwc).useTypes()) {
-			Layer formItem = new Layer(Layer.DIV);
-			formItem.setStyleClass("formItem");
-			Label label = new Label();
-			label.setLabel(this.iwrb.getLocalizedString("case_type",
-					"Case type"));
-			formItem.add(label);
-			formItem.add(typeSpan);
-			section.add(formItem);
-		}
-
-		Layer formItem = new Layer(Layer.DIV);
-		formItem.setStyleClass("formItem");
-		Label label = new Label();
-		label.setLabel(this.iwrb.getLocalizedString("case_category",
-				"Case category"));
-		formItem.add(label);
-		formItem.add(categorySpan);
-		section.add(formItem);
-
-		if (getCasesBusiness(iwc).useSubCategories()
-				&& !subCategory.equals(category)) {
-			Layer subCategorySpan = new Layer(Layer.SPAN);
-			subCategorySpan.add(new Text(subCategory
-					.getLocalizedCategoryName(locale)));
-
-			formItem = new Layer(Layer.DIV);
-			formItem.setStyleClass("formItem");
-			label = new Label();
-			label.setLabel(this.iwrb.getLocalizedString("sub_case_category",
-					"Sub case category"));
-			formItem.add(label);
-			formItem.add(subCategorySpan);
-			section.add(formItem);
-		}
-
-		if (attachment != null) {
-			Link link = new Link(new Text(attachment.getName()));
-			link.setFile(attachment);
-			link.setTarget(Link.TARGET_BLANK_WINDOW);
-
-			Layer attachmentSpan = new Layer(Layer.SPAN);
-			attachmentSpan.add(link);
-
-			formItem = new Layer(Layer.DIV);
-			formItem.setStyleClass("formItem");
-			label = new Label();
-			label.setLabel(this.iwrb.getLocalizedString("attachment",
-					"Attachment"));
-			formItem.add(label);
-			formItem.add(attachmentSpan);
-			section.add(formItem);
-		}
-
-		/*
-		 * formItem = new Layer(Layer.DIV); formItem.setStyleClass("formItem");
-		 * label = new Label();
-		 * label.setLabel(this.iwrb.getLocalizedString(getPrefix() +
-		 * "regarding", "Regarding")); formItem.add(label);
-		 * formItem.add(regardingSpan); section.add(formItem);
-		 */
-
-		formItem = new Layer(Layer.DIV);
-		formItem.setStyleClass("formItem");
-		formItem.setStyleClass("informationItem");
-		label = new Label();
-		label.setLabel(this.iwrb.getLocalizedString(getPrefix() + "message",
-				"Message"));
-		formItem.add(label);
-		formItem.add(messageSpan);
-		section.add(formItem);
-
-		Layer clear = new Layer(Layer.DIV);
-		clear.setStyleClass("Clear");
-		section.add(clear);
-
-		Layer bottom = new Layer(Layer.DIV);
-		bottom.setStyleClass("bottom");
-		form.add(bottom);
-
-		Link back = getButtonLink(this.iwrb.getLocalizedString("previous",
-				"Previous"));
-		back.setStyleClass("homeButton");
-		back.setValueOnClick(PARAMETER_ACTION, String.valueOf(ACTION_PHASE_1));
-		back.setToFormSubmit(form);
-		bottom.add(back);
 
 		Link next = getButtonLink(this.iwrb.getLocalizedString("send", "Send"));
 		next.setValueOnClick(PARAMETER_ACTION, String.valueOf(ACTION_SAVE));
@@ -1026,6 +767,12 @@ public class UserCaseCreator extends CaseCreator {
 					"You must enter a message"));
 		}
 
+		if (iUseAnonymous && !iwc.isParameterSet(PARAMETER_ACCEPT_TERMS)) {
+			setError(PARAMETER_ACCEPT_TERMS, this.iwrb.getLocalizedString(
+					getPrefix() + "case_creator.accept_terms_empty",
+					"You must accept the terms"));			
+		}
+		
 		if (hasErrors()) {
 			showPhaseOne(iwc);
 			return;
@@ -1079,15 +826,15 @@ public class UserCaseCreator extends CaseCreator {
 
 		//new stuff
 		String title = iwc.getParameter(PARAMETER_TITLE);
-		String want_answer = iwc.getParameter(PARAMETER_WANT_ANSWER);
-		String phone_answer = iwc.getParameter(PARAMETER_ANSWER_TYPE_PHONE);
-		String email_answer = iwc.getParameter(PARAMETER_ANSWER_TYPE_EMAIL);
+		String wantAnswer = iwc.getParameter(PARAMETER_WANT_ANSWER);
+		String phoneAnswer = iwc.getParameter(PARAMETER_ANSWER_TYPE_PHONE);
+		String emailAnswer = iwc.getParameter(PARAMETER_ANSWER_TYPE_EMAIL);
 		String priority = iwc.getParameter(PARAMETER_PRIORITY);
 
 		String name = iwc.getParameter(PARAMETER_NAME);
 		String ssn = iwc.getParameter(PARAMETER_PERSONAL_ID);
 		String email = iwc.getParameter(PARAMETER_EMAIL);
-		String email_conf = iwc.getParameter(PARAMETER_EMAIL_CONF);
+		String emailConf = iwc.getParameter(PARAMETER_EMAIL_CONF);
 		String phone = iwc.getParameter(PARAMETER_PHONE);
 		
 		Locale locale = iwc.getCurrentLocale();
@@ -1120,9 +867,20 @@ public class UserCaseCreator extends CaseCreator {
 
 			theCase.setTitle(title);
 			theCase.setPriority(priority);
-			theCase.setWantReply(want_answer);
-			theCase.setWantReplyEmail(email_answer);
-			theCase.setWantReplyPhone(phone_answer);
+			if (iUseAnonymous || iUseSessionUser) {
+				Boolean wantAnswerBool = new Boolean(wantAnswer);
+				Boolean wantEmailBool = new Boolean(emailAnswer);
+				Boolean wantPhoneBool = new Boolean(phoneAnswer);
+				theCase.setWantReply(wantAnswerBool.toString());
+				theCase.setWantReplyEmail(wantEmailBool.toString());
+				theCase.setWantReplyPhone(wantPhoneBool.toString());
+			}
+			else {
+				Boolean answer = new Boolean(wantAnswer);
+				answer = new Boolean(!answer.booleanValue());
+				theCase.setWantReply(answer.toString());
+			}
+			
 			if (iUseAnonymous) {
 				theCase.setAsAnonymous(true);
 			} else {
@@ -1234,6 +992,5 @@ public class UserCaseCreator extends CaseCreator {
 		}
 		
 		return null;
-	}
-	
+	}	
 }
