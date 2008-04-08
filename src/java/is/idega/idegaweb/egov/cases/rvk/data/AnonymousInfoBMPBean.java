@@ -74,6 +74,10 @@ public class AnonymousInfoBMPBean extends GenericEntity implements
 		setColumn(COLUMN_PERSONAL_ID, personalID);
 	}
 	
+	public void setEmail(String email) {
+		setColumn(COLUMN_EMAIL, email);		
+	}
+	
 	public void setPhone(String phone) {
 		setColumn(COLUMN_PHONE, phone);
 	}

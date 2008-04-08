@@ -2,7 +2,10 @@ package is.idega.idegaweb.egov.cases.rvk.presentation;
 
 import is.idega.idegaweb.egov.cases.data.CaseCategory;
 import is.idega.idegaweb.egov.cases.data.CaseType;
+import is.idega.idegaweb.egov.cases.data.GeneralCase;
 import is.idega.idegaweb.egov.cases.presentation.CaseCreator;
+import is.idega.idegaweb.egov.cases.rvk.data.AnonymousInfo;
+import is.idega.idegaweb.egov.cases.rvk.data.AnonymousInfoHome;
 import is.idega.idegaweb.egov.message.business.MessageSession;
 
 import java.io.FileInputStream;
@@ -22,6 +25,7 @@ import com.idega.core.contact.data.Phone;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
 import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 import com.idega.io.UploadFile;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
@@ -64,7 +68,7 @@ public class UserCaseCreator extends CaseCreator {
 
 	protected static final String PARAMETER_ANSWER_TYPE_EMAIL = "prm_answer_type_email";
 
-	protected static final String PARAMETER_ANSWER_TYPE_WEB = "prm_answer_type_web";
+	//protected static final String PARAMETER_ANSWER_TYPE_WEB = "prm_answer_type_web";
 
 	protected static final String PARAMETER_PRIORITY = "prm_priority";
 
@@ -75,7 +79,6 @@ public class UserCaseCreator extends CaseCreator {
 	}
 
 	protected void showPhaseOne(IWContext iwc) throws RemoteException {
-		System.out.println("UserCaseCreator: ShowPhaseOne");
 		User user = getUser(iwc);
 		Locale locale = iwc.getCurrentLocale();
 		boolean hideOtherCategories = "true".equalsIgnoreCase(iwc
@@ -996,6 +999,73 @@ public class UserCaseCreator extends CaseCreator {
 	}
 
 	protected void save(IWContext iwc) throws RemoteException {
+		if (this.getCasesBusiness(iwc).useSubCategories()) {
+			if (!iwc.isParameterSet(PARAMETER_SUB_CASE_CATEGORY_PK)) {
+				setError(PARAMETER_CASE_CATEGORY_PK, this.iwrb
+						.getLocalizedString("case_creator.sub_category_empty",
+								"You must select a category"));
+			}
+		}
+		if (!iwc.isParameterSet(PARAMETER_CASE_CATEGORY_PK)) {
+			setError(PARAMETER_CASE_CATEGORY_PK, this.iwrb
+					.getLocalizedString("case_creator.category_empty",
+							"You must select a category"));
+		}
+		if (!iwc.isParameterSet(PARAMETER_CASE_TYPE_PK)) {
+			setError(PARAMETER_CASE_TYPE_PK, this.iwrb.getLocalizedString(
+					"case_creator.type_empty", "You must select a type"));
+		}
+		if (!iwc.isParameterSet(PARAMETER_TITLE)) {
+			setError(PARAMETER_TITLE, this.iwrb.getLocalizedString(getPrefix()
+					+ "case_creator.title_empty",
+					"You must enter a title for the case"));
+		}
+		if (!iwc.isParameterSet(PARAMETER_MESSAGE)) {
+			setError(PARAMETER_MESSAGE, this.iwrb.getLocalizedString(
+					getPrefix() + "case_creator.message_empty",
+					"You must enter a message"));
+		}
+
+		if (hasErrors()) {
+			showPhaseOne(iwc);
+			return;
+		}
+
+		ICFile attachment = null;
+		UploadFile uploadFile = iwc.getUploadedFile();
+		if (uploadFile != null && uploadFile.getName() != null
+				&& uploadFile.getName().length() > 0) {
+			try {
+				FileInputStream input = new FileInputStream(uploadFile
+						.getRealPath());
+
+				attachment = ((ICFileHome) IDOLookup.getHome(ICFile.class))
+						.create();
+				attachment.setName(uploadFile.getName());
+				attachment.setMimeType(uploadFile.getMimeType());
+				attachment.setFileValue(input);
+				attachment.setFileSize((int) uploadFile.getSize());
+				attachment.store();
+
+				uploadFile.setId(((Integer) attachment.getPrimaryKey())
+						.intValue());
+				try {
+					FileUtil.delete(uploadFile);
+				} catch (Exception ex) {
+					System.err
+							.println("MediaBusiness: deleting the temporary file at "
+									+ uploadFile.getRealPath() + " failed.");
+				}
+			} catch (RemoteException e) {
+				e.printStackTrace(System.err);
+				uploadFile.setId(-1);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (CreateException ce) {
+				ce.printStackTrace();
+			}
+		}
+
 		String regarding = iwc.getParameter(PARAMETER_REGARDING);
 		String message = getMessageParameterValue(iwc);
 		iwc.removeSessionAttribute(PARAMETER_MESSAGE);
@@ -1004,8 +1074,22 @@ public class UserCaseCreator extends CaseCreator {
 		Object subCaseCategoryPK = iwc
 				.getParameter(PARAMETER_SUB_CASE_CATEGORY_PK);
 		Object caseTypePK = iwc.getParameter(PARAMETER_CASE_TYPE_PK);
-		Object attachmentPK = iwc.getParameter(PARAMETER_ATTACHMENT_PK);
+		//Object attachmentPK = iwc.getParameter(PARAMETER_ATTACHMENT_PK);
 		boolean isPrivate = iwc.isParameterSet(PARAMETER_PRIVATE);
+
+		//new stuff
+		String title = iwc.getParameter(PARAMETER_TITLE);
+		String want_answer = iwc.getParameter(PARAMETER_WANT_ANSWER);
+		String phone_answer = iwc.getParameter(PARAMETER_ANSWER_TYPE_PHONE);
+		String email_answer = iwc.getParameter(PARAMETER_ANSWER_TYPE_EMAIL);
+		String priority = iwc.getParameter(PARAMETER_PRIORITY);
+
+		String name = iwc.getParameter(PARAMETER_NAME);
+		String ssn = iwc.getParameter(PARAMETER_PERSONAL_ID);
+		String email = iwc.getParameter(PARAMETER_EMAIL);
+		String email_conf = iwc.getParameter(PARAMETER_EMAIL_CONF);
+		String phone = iwc.getParameter(PARAMETER_PHONE);
+		
 		Locale locale = iwc.getCurrentLocale();
 
 		CaseCategory category = null;
@@ -1020,13 +1104,13 @@ public class UserCaseCreator extends CaseCreator {
 
 		try {
 			User user = getUser(iwc);
-			getCasesBusiness(iwc)
+			GeneralCase theCase = getCasesBusiness(iwc)
 					.storeGeneralCase(
 							user,
 							getCasesBusiness(iwc).useSubCategories() ? subCaseCategoryPK
 									: caseCategoryPK,
 							caseTypePK,
-							attachmentPK,
+							attachment.getPrimaryKey(),
 							regarding,
 							message,
 							getType(),
@@ -1034,6 +1118,26 @@ public class UserCaseCreator extends CaseCreator {
 							getCasesBusiness(iwc).getIWResourceBundleForUser(
 									user, iwc, this.getBundle(iwc)));
 
+			theCase.setTitle(title);
+			theCase.setPriority(priority);
+			theCase.setWantReply(want_answer);
+			theCase.setWantReplyEmail(email_answer);
+			theCase.setWantReplyPhone(phone_answer);
+			if (iUseSessionUser) {
+				theCase.setCreator(iwc.getCurrentUser());
+			}
+			theCase.store();
+			
+			AnonymousInfoHome anonInfoHome = getAnonymousInfoHome();
+			AnonymousInfo info = anonInfoHome.create();
+			info.setGeneralCase(theCase);
+			info.setIPAddress(iwc.getRemoteIpAddress());
+			info.setPersonalID(ssn);
+			info.setPhone(phone);
+			info.setEmail(email);
+			info.setUser(user);
+			info.store();
+			
 			String headingText = this.iwrb
 					.getLocalizedString(
 							getPrefix()
@@ -1115,4 +1219,15 @@ public class UserCaseCreator extends CaseCreator {
 		return (MessageSession) com.idega.business.IBOLookup.getSessionInstance(iwc, MessageSession.class);
 	}
 
+	private AnonymousInfoHome getAnonymousInfoHome() {
+		try {
+			return (AnonymousInfoHome) IDOLookup.getHome(AnonymousInfo.class);
+		} catch (IDOLookupException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
 }

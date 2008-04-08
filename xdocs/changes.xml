@@ -5,6 +5,12 @@
 	</properties>
 	
 	<body>
+		<release version="1.0.3" date="2008-04-08">
+			<action dev="palli" type="fix">
+				Added fields to Anonymous info bean. Fixed save function to save extra data.
+			</action>
+		</release>
+
 		<release version="1.0.2" date="2008-04-03">
 			<action dev="palli" type="update">
 				Added terms pdf file to anonymous case.

@@ -52,6 +52,11 @@ public interface AnonymousInfo extends IDOEntity {
 	public void setPersonalID(String personalID);
 
 	/**
+	 * @see is.idega.idegaweb.egov.cases.rvk.data.AnonymousInfoBMPBean#setEmail
+	 */
+	public void setEmail(String email);
+
+	/**
 	 * @see is.idega.idegaweb.egov.cases.rvk.data.AnonymousInfoBMPBean#setPhone
 	 */
 	public void setPhone(String phone);
