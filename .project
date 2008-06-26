@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <projectDescription>
-  <name>is.idega.idegaweb.egov.cases.rvk</name>
-  <comment>
+	<name>is.idega.idegaweb.egov.cases.rvk</name>
+	<comment>
   </comment>
-  <projects>
-    <project>is.idega.idegaweb.egov.cases</project>
-  </projects>
-  <buildSpec>
-    <buildCommand>
-      <name>org.eclipse.jdt.core.javabuilder</name>
-      <arguments>
-      </arguments>
-    </buildCommand>
-  </buildSpec>
-  <natures>
-    <nature>org.eclipse.jdt.core.javanature</nature>
-  </natures>
+	<projects>
+		<project>is.idega.idegaweb.egov.cases</project>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.maven.ide.eclipse.maven2Builder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.maven.ide.eclipse.maven2Nature</nature>
+	</natures>
 </projectDescription>
