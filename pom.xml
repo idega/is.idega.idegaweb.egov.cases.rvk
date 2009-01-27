@@ -5,22 +5,21 @@
   <parent>
   	<groupId>com.idega.block.egov</groupId>
   	<artifactId>com.idega.block.egov</artifactId>
-  	<version>4.1.0</version>
+  	<version>4.1.1-SNAPSHOT</version>
   </parent>
   <packaging>jar</packaging>
   <groupId>com.idega.block.egov</groupId>
   <artifactId>is.idega.idegaweb.egov.cases.rvk</artifactId>
   <name>eGov General Cases Reykjavik</name>
-  <version>4.1.0</version>
+  <version>4.1.1-SNAPSHOT</version>
   <inceptionYear>2008</inceptionYear>
   <scm>
     <!--
     <connection>scm:cvs:ext:${user.name}@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</connection>
     <developerConnection>scm:cvs:ext:${user.name}@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</developerConnection> 
     -->
-    <connection>scm:cvs:ext:${user.name}@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</connection>
-    <developerConnection>scm:cvs:ext:${user.name}@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</developerConnection>
-    <tag>com_idega_block_egov-4_1_0</tag>
+    <connection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:com.idega.block.egov/is.idega.idegaweb.egov.cases.rvk/</connection>
+    <developerConnection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:com.idega.block.egov/is.idega.idegaweb.egov.cases.rvk/</developerConnection>
   </scm>
 
   <developers>
