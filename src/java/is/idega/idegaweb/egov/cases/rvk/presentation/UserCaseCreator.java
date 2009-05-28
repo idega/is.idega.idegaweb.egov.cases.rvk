@@ -863,7 +863,7 @@ public class UserCaseCreator extends CaseCreator {
 							getType(),
 							isPrivate,
 							getCasesBusiness(iwc).getIWResourceBundleForUser(
-									user, iwc, this.getBundle(iwc)));
+									user, iwc, this.getBundle(iwc)), true);
 
 			theCase.setTitle(title);
 			theCase.setPriority(priority);
