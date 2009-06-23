@@ -834,7 +834,7 @@ public class UserCaseCreator extends CaseCreator {
 		String name = iwc.getParameter(PARAMETER_NAME);
 		String ssn = iwc.getParameter(PARAMETER_PERSONAL_ID);
 		String email = iwc.getParameter(PARAMETER_EMAIL);
-		String emailConf = iwc.getParameter(PARAMETER_EMAIL_CONF);
+		//String emailConf = iwc.getParameter(PARAMETER_EMAIL_CONF);
 		String phone = iwc.getParameter(PARAMETER_PHONE);
 		
 		Locale locale = iwc.getCurrentLocale();
@@ -863,7 +863,7 @@ public class UserCaseCreator extends CaseCreator {
 							getType(),
 							isPrivate,
 							getCasesBusiness(iwc).getIWResourceBundleForUser(
-									user, iwc, this.getBundle(iwc)), true);
+									user, iwc, this.getBundle(iwc)), true, null);
 
 			theCase.setTitle(title);
 			theCase.setPriority(priority);
